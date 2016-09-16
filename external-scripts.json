@@ -4,5 +4,6 @@
   "hubot-google-translate",
   "hubot-maps",
   "hubot-redis-brain",
-  "hubot-rules"
+  "hubot-rules",
+  "hubot-env"
 ]
