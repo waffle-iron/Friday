@@ -1,0 +1,39 @@
+! version = 2.0
+
+> object gettorrents javascript
+
+return new rs.Promise(function (resolve, reject) {
+    var deluge = require('node-deluge')('192.168.1.5', 'deluge', null);
+    deluge.get_status(function (data) {
+        var torrents = data;
+        var msg = "\nCurrent Torrents\n";
+        var length = Object.keys(torrents.result.torrents).length;
+        msg = msg + "Name\t\t\tProgress\n";
+        for (var key in torrents.result.torrents) {
+            var obj = torrents.result.torrents[key];
+            if (obj["state"] != "Queued" && obj["state"] != "Paused" && obj["state"] != "Checking") {
+                msg = msg + truncateString(obj["name"], 20) + "\t\t\t" + obj["progress"].toFixed(2) + "% \n";
+            }
+        }
+        resolve(msg);
+    });
+})
+
+function truncateString(str, num) {
+    if (num < str.length) {
+        str = str.substring(0, num);
+        return str + "...";
+    }
+    else {
+        return "This is not a string";
+    }
+
+}
+            
+< object
+
++ (what am i downloading|get downloads|downloads|what's downloading?)
+- You're downloading <call>gettorrents</call>
+
+
+
