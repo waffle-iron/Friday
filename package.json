@@ -8,6 +8,7 @@
     "deluge-api": "^0.3.0",
     "githubot": "^1.0.1",
     "hubot": "^2.19.0",
+    "hubot-darksky": "^1.0.2",
     "hubot-diagnostics": "0.0.1",
     "hubot-github": "^0.2.0",
     "hubot-google-images": "^0.2.6",
