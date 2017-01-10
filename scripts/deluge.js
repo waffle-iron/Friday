@@ -16,7 +16,7 @@
 module.exports = function (robot) {
     robot.respond(/deluge ?(status)?(.*)/i, function (msg) {
         msg.send("Just gathering the required information");
-        var deluge = require('node-deluge')('192.168.1.5', 'deluge', null);
+        var deluge = require('node-deluge')(process.env.DELUGE_WEB_URL, process.env.DELUGE_PASSWORD, null);
         deluge.get_status(function (data) {
             var torrents = data;
             var slackMsg = {

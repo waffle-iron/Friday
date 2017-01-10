@@ -25,7 +25,7 @@ module.exports = function (robot) {
     var rootFolderPath = process.env.SONARR_ROOT_FOLDER_PATH
 
     robot.respond(/what\'?s showing (.*)/i, function (msg) {
-        var url = baseURL + ":" + port + "/api/calendar?apikey=' + SonarrApiKey;
+        var url = baseURL + ":" + port + "/api/calendar?apikey=" + SonarrApiKey;
 
 
         if (msg.match[1] == 'today') {
