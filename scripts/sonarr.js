@@ -12,13 +12,21 @@
 //    hubot what's showing this week
 //    hubot my shows
 //    hubot shows
+//    hubot add show <Show Name>
+//    hubot add show <Show Name> tvdbId <tvdbId>
 //  Author:
 //    Codeiain
 
 module.exports = function (robot) {
 
+    var SonarrApiKey = process.env.SONARR_KEY
+    var baseURL = process.env.SONARR_URL
+    var port = process.env.SONARR_PORT != undefined ? process.env.SONARR_PORT : '8989';
+    var rootFolderPath = process.env.SONARR_ROOT_FOLDER_PATH
+
     robot.respond(/what\'?s showing (.*)/i, function (msg) {
-        var url = 'http://192.168.1.5:8989/api/calendar?apikey=1c622d8bf0d64ddea5ae8562670894aa';
+        var url = baseURL + ":" + port + "/api/calendar?apikey=' + SonarrApiKey;
+
 
         if (msg.match[1] == 'today') {
             url += '&start=' + today() + '&end=' + today();
@@ -44,14 +52,11 @@ module.exports = function (robot) {
                 return;
             }
             for (var i = 0; i < data.length; i++) {
-
-
                 slackMsg.attachments[0].fields.push({
                     "title": "Series",
                     "value": data[i].series.title,
                     "short": true
                 });
-                //msg.send(data[i].series.title);
             }
             msg.send(slackMsg);
         });
@@ -59,8 +64,7 @@ module.exports = function (robot) {
     });
 
     robot.respond(/(my)? ?shows/i, function (msg) {
-        var url = "http://192.168.1.5:8989/api/series?apikey=1c622d8bf0d64ddea5ae8562670894aa"
-
+        var url = baseURL + ":" + port + "/api/series?apikey=" + SonarrApiKey
         robot.http(url).get()(function (err, res, body) {
             var data = JSON.parse(body);
             var slackMsg = {
@@ -84,54 +88,111 @@ module.exports = function (robot) {
     });
 
     robot.respond(/add show (.*)/i, function (msg) {
-        //api/series/lookup?term=The%20Blacklist
-        /*tvdbId:showData[0].tvdbId,
-        title:showData[0]:1,
-        titleSlug:showData[0].titleSlug,
-        images:showData[0].images,
-        seasons:showData[0].seasons
-
-        'Authorization': 'Basic '
-        */
         var toFind = encodeURIComponent(msg.match[1]);
-        var url = "http://codeiain.myftp.org:8989/api/series/lookup?term=" + toFind + "&apikey=1c622d8bf0d64ddea5ae8562670894aa"
+        var url = baseURL + ":" + port + "/api/series/lookup?term=" + toFind + "&apikey=" + SonarrApiKey
         robot.http(url).get()(function (err, res, body) {
             var showData = JSON.parse(body);
-            //console.log(showData.length);
+            var http = require('http');
             if (showData.length == 1) {
                 var postdata = {
-                    tvdbId: showData[0].tvdbId,
-                    title: showData[0].title,
-                    qualityProfileId: 1,
-                    titleSlug: showData[0].titleSlug,
-                    images: showData[0].images,
-                    seasons: showData[0].seasons,
-                    rootFolderPath: "/home/pi/fileserv/Shared Videos/TV Shows/",
-                    apikey:'1c622d8bf0d64ddea5ae8562670894aa'
+                    'tvdbId': showData[0].tvdbId,
+                    'title': showData[0].title,
+                    'qualityProfileId': 1,
+                    'titleSlug': showData[0].titleSlug,
+                    'images': showData[0].images,
+                    'seasons': showData[0].seasons,
+                    'rootFolderPath': rootFolderPath,
                 }
-                console.log(JSON.stringify(postdata));
-                robot.http("http://codeiain.myftp.org:8989/api/series/")
-                    //.header('Authorization', 'Basic 1c622d8bf0d64ddea5ae8562670894aa')
-                    .header('X-Api-Key', '1c622d8bf0d64ddea5ae8562670894aa')
-                    .post(postdata)(function (err, res, body) {
-                        console.log('err= '+err);
-                        console.log('res = ' +res);
-                        console.log('body= ' +body);
-
+                PostToSonarr(postdata);
+            }
+            else if (showData.length > 1) {
+                var slackMsg = {
+                    "attachments": [
+                        {
+                            "fallback": "The following shows where found",
+                            "pretext": "The following shows where found",
+                            "fields": [],
+                        }
+                    ]
+                };
+                for (var i = 0; i < showData.length; i++) {
+                    slackMsg.attachments[0].fields.push({
+                        "title": "Name",
+                        "value": showData[i].title,
+                        "short": true
+                    });
+                    slackMsg.attachments[0].fields.push({
+                        "title": "tvdbId",
+                        "value": showData[i].tvdbId,
+                        "short": true
                     });
 
-            }
-            else if (showData > 1) {
-
+                }
+                msg.send(slackMsg);
             }
             else {
                 msg.send("Can't find that  show");
             }
-
-
-
         })
     });
+
+    robot.respond(/add show (.*) tvdbId (.*)/i, function (msg) {
+        var show = encodeURIComponent(msg.match[1]);
+        var tvdbId = msg.match[2];
+
+        var url = baseURL + ":" + port + "/api/series/lookup?term=" + show + "&tvdb=" + tvdbId + "&apikey=" + SonarrApiKey
+        robot.http(url).get()(function (err, res, body) {
+            var showData = JSON.parse(body);
+            var http = require('http');
+            if (showData.length == 1) {
+                var postdata = {
+                    'tvdbId': showData[0].tvdbId,
+                    'title': showData[0].title,
+                    'qualityProfileId': 1,
+                    'titleSlug': showData[0].titleSlug,
+                    'images': showData[0].images,
+                    'seasons': showData[0].seasons,
+                    'rootFolderPath': "/home/pi/fileserv/Shared Videos/TV Shows/",
+                }
+                PostToSonarr(postdata);
+            } else {
+                msg.send("cant find required info");
+            }
+        })
+    });
+
+    function PostToSonarr(postdata) {
+        var post_options = {
+            host: baseURL,
+            path: '/api/series',
+            method: 'POST',
+            port: port,
+            headers: {
+                'X-Api-Key': SonarrApiKey,
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Length': Buffer.byteLength(JSON.stringify(postdata))
+            }
+        };
+
+        var post_req = http.request(post_options, function (res) {
+            console.log(res.statusCode);
+            msg.send('blaaa');
+            res.setEncoding('utf8');
+            var body = '';
+            res.on('data', function (d) {
+                body += d;
+            });
+            res.on('end', function () {
+                msg.send(body);
+            })
+        });
+        post_req.on('error', function (e) {
+            console.log(`problem with request: ${e.message}`);
+        })
+        post_req.write(JSON.stringify(postdata));
+        post_req.end();
+    }
+
 
     function today() {
         var today = new Date();
@@ -167,16 +228,3 @@ module.exports = function (robot) {
 
     }
 };
-
-
-
-/*
-
-data = JSON.stringify({
-  foo: 'bar'
-});
-
-robot = robot.http("https://midnight-train").header('Content-Type', 'application/json').post(data)(function(err, res, body) {});
-
-// ---
-*/
