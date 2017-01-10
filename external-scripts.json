@@ -3,6 +3,5 @@
   "hubot-redis-brain",
   "hubot-rules",
   "hubot-shipit",
-  "hubot-remind-advanced",
   "hubot-travis-ci"
 ]
