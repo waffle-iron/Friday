@@ -183,7 +183,8 @@ module.exports = function (robot) {
                 body += d;
             });
             res.on('end', function () {
-                msg.send(body);
+                msg.send('Added the show' + postdata.title);
+                //msg.send(body);
             })
         });
         post_req.on('error', function (e) {
