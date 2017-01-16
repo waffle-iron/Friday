@@ -18,18 +18,15 @@ module.exports = function (robot) {
         getGlobalIP(function (ip) {
             msg.send("My public IP address is: " + ip);
         });
-
     });
 };
 
 function getGlobalIP(callback) {
     var http = require('http');
-
     http.get({ 'host': 'api.ipify.org', 'port': 80, 'path': '/' }, function (resp) {
         resp.on('data', function (ip) {
             console.log("My public IP address is: " + ip);
             callback(ip)
-
         });
     });
 }
