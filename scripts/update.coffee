@@ -55,7 +55,6 @@ module.exports = (robot) ->
               lastBuild = parseInt(response.last_build_number, 10)
               lastBuild = lastBuild + 1
               msg.send "updating from build " + currentVersion + " to " + response.last_build_number
-
               while x < lastBuild
                 msg.send findBybuildNumber(commits, x)
                 x++
