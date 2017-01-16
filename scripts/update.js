@@ -48,11 +48,12 @@ module.exports = function (robot) {
                             if (currentVersion === null) {
                                 currentVersion = response.last_build_number;
                             }
+                            msg.send("updating from build " + currentVersion + " to " + response.last_build_number);
                             commits = JSON.parse(body);
                             x = parseInt(currentVersion, 10);
                             lastBuild = parseInt(response.last_build_number, 10);
                             lastBuild = lastBuild + 1;
-                            msg.send("updating from build " + currentVersion + " to " + response.last_build_number);
+
                             while (x < lastBuild) {
                                 msg.send(findBybuildNumber(commits, x));
                                 console.log(' x ');
