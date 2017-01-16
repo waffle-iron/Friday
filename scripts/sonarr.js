@@ -93,9 +93,8 @@ module.exports = function (robot) {
         var url = baseURL + ":" + port + "/api/series/lookup?term=" + toFind + "&apikey=" + SonarrApiKey
         robot.http(url).get()(function (err, res, body) {
             var showData = JSON.parse(body);
-            msg.send("found " + showData.length + " shows");
-            var http = require('http');
-            if (showData.length == 1) {
+            msg.send("found " + showData.length + " show(s)");
+            if (showData.length === 1) {
                 msg.send("adding show " + showData[0].title);
                 var postdata = {
                     'tvdbId': showData[0].tvdbId,
@@ -106,6 +105,7 @@ module.exports = function (robot) {
                     'seasons': showData[0].seasons,
                     'rootFolderPath': rootFolderPath,
                 }
+                
                 PostToSonarr(postdata);
             }
             else if (showData.length > 1) {
@@ -165,6 +165,7 @@ module.exports = function (robot) {
     });
 
     function PostToSonarr(postdata) {
+        msg.send('sending data to sonarr');
         var post_options = {
             host: baseURL,
             path: '/api/series',
@@ -179,7 +180,6 @@ module.exports = function (robot) {
 
         var post_req = http.request(post_options, function (res) {
             console.log(res.statusCode);
-            msg.send('blaaa');
             res.setEncoding('utf8');
             var body = '';
             res.on('data', function (d) {
