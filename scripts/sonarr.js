@@ -88,12 +88,15 @@ module.exports = function (robot) {
     });
 
     robot.respond(/add show (.*)/i, function (msg) {
+        msg.send("Searching for show");
         var toFind = encodeURIComponent(msg.match[1]);
         var url = baseURL + ":" + port + "/api/series/lookup?term=" + toFind + "&apikey=" + SonarrApiKey
         robot.http(url).get()(function (err, res, body) {
             var showData = JSON.parse(body);
+            msg.send("found " + showData.length + " shows");
             var http = require('http');
             if (showData.length == 1) {
+                msg.send("adding show " + showData[0].title);
                 var postdata = {
                     'tvdbId': showData[0].tvdbId,
                     'title': showData[0].title,
