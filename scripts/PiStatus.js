@@ -8,7 +8,7 @@
 //    None
 //
 //  Commands:
-//    hubot Get status <server name> 
+//    hubot get status <server name>  <cpu> <mem> <temp> <all>
 //  
 //  Author:
 //    Codeiain
@@ -55,24 +55,41 @@ module.exports = function (robot) {
 
     'use stricted';
     robot.respond(/Get status (.*) (.*)?/i, function (msg) {
-        var server = GetByName(msg.match[1]);
+        var server = GetByName(Servers, msg.match[1]);
         var dataType = msg.match[2];
         var url = urlBuilder(server, dataType);
+        console.log('url = ' + url);
+        msg.send('Gathering the require data');
         robot.http(url).get()(function (err, res, body) {
-            var pidata = JSON.parse(body);
-            var slackMsg = {
-                "attachments": [
-                    {
-                        "fallback":"Data for " + server.name,
-                        "pretext": "Data for" + server.name,
-                        "fields": []
-                    }
-                ]
-            };
-            if (pidata.length === 1) {
-
+            if (err) {
+                msg.send('Can\'t connect to end point');
             } else {
-
+                var pidata = JSON.parse(body);
+                var slackMsg = {
+                    "attachments": [
+                        {
+                            "fallback": "Data for " + server.name,
+                            "pretext": "Data for" + server.name,
+                            "fields": []
+                        }
+                    ]
+                };
+                if (pidata.length === 1) {
+                    slackMsg.attachments[0].fields.push({
+                        "title": pidata[0].type,
+                        "value": pidata[0].usage,
+                        "short": true
+                    });
+                } else {
+                    for (var x = 0; x < pidata.length; x++) {
+                        slackMsg.attachments[x].fields.push({
+                            "title": pidata[x].type,
+                            "value": pidata[x].usage,
+                            "short": true
+                        });
+                    }
+                }
+                msg.send(slackMsg);
             }
         });
 
@@ -82,15 +99,18 @@ module.exports = function (robot) {
     });
 
     function GetByName(arr, value) {
-        var result = arr.filter(function (o) {
-            return o.name.toUpperCase() === value.toUpperCase();
-        });
+
+        var result = [];
+        for (var x = 0; x < arr.length; x++) {
+            if (arr[x].name.toUpperCase() === value.toUpperCase()) {
+                result.push(arr[x]);
+            }
+        }
         return result ? result[0] : null;
     }
 
     function urlBuilder(server, option) {
         var sb = new CIStringBuilder();
-
         sb.appendFormat('http://{0}:{1}', [server.ip, port]);
         if (option === undefined || option === null) {
             option = 'all';
