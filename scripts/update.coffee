@@ -57,8 +57,8 @@ module.exports = (robot) ->
               msg.send "updating from build " + currentVersion + " to " + response.last_build_number
               while x < lastBuild
                 msg.send findBybuildNumber(commits, x)
+                console.log ' x '
                 x++
-              return
               msg.send 'git pull...'
               child_process.exec 'git pull', (error, stdout, stderr) ->
               if error
