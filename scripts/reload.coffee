@@ -9,6 +9,7 @@
 #
 # Commands:
 #   hubot reload all scripts - Reloads scripts without restart. Loads new scripts too.
+#   hubot reload scripts - Reloads scripts without restart. Loads new scripts too.
 #   hubot command count - Tells how many commands hubot knows
 #
 # Author:
@@ -25,7 +26,7 @@ module.exports = (robot) ->
   robot.hear /command count/i, (msg) ->
     msg.send "I am aware of #{msg.robot.commands.length} commands"
 
-  robot.respond /reload all scripts/i, (msg) ->
+  robot.respond /reload ?(all)? scripts/i, (msg) ->
     try
       oldCommands = robot.commands
       oldListeners = robot.listeners
