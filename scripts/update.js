@@ -97,13 +97,14 @@ module.exports = function (robot) {
                                             msg.send('I\'m up-to-date!');
                                         }
                                     }
-                                    redisClient.set('fridayVersion', lastBuild);
+
                                 });
                             } catch (_error) {
                                 _error = _error;
                                 error = _error;
                                 return msg.send('npm update failed: ' + error);
                             }
+                            redisClient.set('fridayVersion', lastBuild);
                         });
                     });
                 } else if (response !== 0) {
