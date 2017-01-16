@@ -1,3 +1,18 @@
+// Description:
+//    Updates Hubot's source and shows details from travis ci
+//
+//  Dependencies:
+//    nome
+//
+//  Configuration:
+//    None
+//
+//  Commands:
+//    hubot update source
+//  Author:
+//    Codeiain
+
+
 var child_process = require('child_process');
 var redis = require('redis');
 var redisClient = redis.createClient();
