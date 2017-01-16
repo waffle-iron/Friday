@@ -4,5 +4,6 @@
   "hubot-rules",
   "hubot-shipit",
   "hubot-travis-ci",
-  "hubot-darksky"
+  "hubot-darksky",
+  "hubot-trello"
 ]
