@@ -97,7 +97,7 @@ module.exports = function (robot) {
                                             msg.send('I\'m up-to-date!');
                                         }
                                     }
-                                    return redisClient.set('fridayVersion', lastBuild);
+                                    redisClient.set('fridayVersion', lastBuild);
                                 });
                             } catch (_error) {
                                 _error = _error;
