@@ -9,9 +9,7 @@
 //
 //  Commands:
 //    hubot Get gists
-//    hubot get snippits
 //    hubot get gist <id>
-//    hubot get gists tag <tag>
 //  Author:
 //    Codeiain
 
@@ -42,7 +40,7 @@ module.exports = function (robot) {
             for (var i = 0; i < gists.length; i++) {
                 slackMsg.attachments[0].fields.push({
                     "title": "ID",
-                    "value": gists[i].Id,
+                    "value": gists[i].id,
                     "short": true
                 });
                 slackMsg.attachments[0].fields.push({
@@ -51,13 +49,39 @@ module.exports = function (robot) {
                     "short": true
                 });
             }
-            msg.send(JSON.stringify(slackMsg));
+            msg.send(slackMsg);
         })
     });
 
-    robot.respond(/get gists (.*)/i, function(msg){
+    robot.respond(/get gist (.*)/i, function (msg) {
         var id = msg.match[1];
-        
+        msg.send('Getting gists from Server');
+        getGist(function (gist) {
+            for (var x = 0; x < gist.length; x++) {
+                if (gist[x].id == id) {
+                    var slackMsg = {
+                        "attachments": [
+                            {
+                                "fallback": "Gist" + gist[x].description,
+                                "pretext": "Gist" + gist[x].description,
+                                "text": gist[x].content,
+                                "fields": []
+                            }
+                        ]
+                    };
+                    
+                    for (var i = 0; i < gist[x].tags.length; i++) {
+                        slackMsg.attachments[0].fields.push({
+                            "title": "Tag",
+                            "value":gist[x].tags[i],
+                            "short": true
+                        });
+                    }
+                    msg.send(slackMsg);
+                    return;
+                }
+            }
+        });
     })
 
     function getGist(callback) {
@@ -66,15 +90,9 @@ module.exports = function (robot) {
             ghgist.list(function (err, status, body, header) {
                 if (err) {
                     console.log('Error: ' + err);
-                } else {
-                    console.log('status = ' + status);
-                    console.log('body = ' + body);
-                    console.log('headers = ' + header);
-                }
-                console.log('Prossessing gists');
+                } 
                 var files = [];
                 for (var x = 0; x < status.length; x++) {
-                    console.log('geting gist content');
                     getGistContent(x, status[x], function (gist) {
                         files.push(gist);
                         if (files.length == status.length) {
