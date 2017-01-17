@@ -57,7 +57,7 @@ module.exports = function (robot) {
                         var commitMsg = "";
                         for (var x = currentBuildNumber; x < lastBuildNumber; x++) {
                             //console.log(commitMsg);
-                            commitMsg += FindByBuildNumber(allCommits, x);
+                            commitMsg += FindByBuildNumber(allCommits, x) + "\n";
                         }
                         msg.send(commitMsg);
                         msg.send('git pull...');
