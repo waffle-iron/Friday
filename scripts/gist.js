@@ -19,8 +19,8 @@ var github = require('octonode');
 var http = require('http');
 
 var client = github.client({
-    username: 'codeiain',//process.env.GITHUB_USERNAME,
-    password: 'Gbhmcndg5'//process.env.GITHUB_PASSWORD
+    username: process.env.GITHUB_USERNAME,
+    password: process.env.GITHUB_PASSWORD
 });
 
 var ghme = client.me();
