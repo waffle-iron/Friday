@@ -2,16 +2,19 @@
 //    Shows torrent status
 //
 //  Dependencies:
-//    Node-deluge
+//    cistringbuilder
 //
 //  Configuration:
 //    None
 //
 //  Commands:
 //    hubot Get IP
+//    hubot get sonarr url
+//    hubot get deluge url
 //  Author:
 //    Codeiain
 
+var CIStringBuilder = require('cistringbuilder');
 
 module.exports = function (robot) {
     robot.respond(/get IP/i, function (msg) {
@@ -19,6 +22,22 @@ module.exports = function (robot) {
             msg.send("My public IP address is: " + ip);
         });
     });
+
+    robot.respond(/get sonarr url/i, function(msg){
+        getGlobalIP(function (ip){
+            var sb = new CIStringBuilder();
+            sb.appendFormat('http://{0}:8989',[ip]);
+            msg.send(sb.toString());
+        });
+    })
+
+    robot.respond(/get deluge url/i,function(msg){
+        getGlobalIP(function (ip){
+            var sb = new CIStringBuilder();
+            sb.appendFormat('http://{0}:8112',[ip]);
+            msg.send(sb.toString());
+        });
+    })
 };
 
 function getGlobalIP(callback) {
