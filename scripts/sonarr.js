@@ -19,9 +19,9 @@
 
 module.exports = function (robot) {
 
-    var SonarrApiKey = process.env.SONARR_KEY
-    var baseURL = process.env.SONARR_URL
-    var port = process.env.SONARR_PORT != undefined ? process.env.SONARR_PORT : '8989';
+    var SonarrApiKey = process.env.HUBOT_SONARR_KEY
+    var baseURL = process.env.HUBOT_SONARR_URL
+    var port = process.env.HUBOT_SONARR_PORT != undefined ? process.env.HUBOT_SONARR_PORT : '8989';
     var rootFolderPath = process.env.SONARR_ROOT_FOLDER_PATH
 
     robot.respond(/what\'?s showing (.*)/i, function (msg) {

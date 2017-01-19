@@ -62,8 +62,8 @@ module.exports = function (robot) {
                     var slackMsg = {
                         "attachments": [
                             {
-                                "fallback": "Gist" + gist[x].description,
-                                "pretext": "Gist" + gist[x].description,
+                                "fallback": "Gist " + gist[x].description,
+                                "pretext": gist[x].description,
                                 "text": gist[x].content,
                                 "fields": []
                             }

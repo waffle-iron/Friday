@@ -27,7 +27,7 @@ module.exports = function (robot) {
         }
 
         msg.send("Just gathering the required information");
-        var deluge = require('node-deluge')(process.env.DELUGE_WEB_URL, process.env.DELUGE_PASSWORD, null);
+        var deluge = require('node-deluge')(process.env.HUBOT_DELUGE_WEB_URL, process.env.HUBOT_DELUGE_PASSWORD, null);
         deluge.get_status(function (data) {
             var torrents = data;
             if (data) {
