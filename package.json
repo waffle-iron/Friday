@@ -23,9 +23,10 @@
     "hubot-shipit": "^0.2.0",
     "hubot-slack": "^4.0.5",
     "hubot-travis-ci": "0.0.2",
+    "hubot-trello": "*",
     "node-deluge": "^1.0.2",
-    "hubot-trello":"*",
-    "octonode": "^0.7.7"	
+    "nodemailer": "^3.1.1",
+    "octonode": "^0.7.7"
   },
   "engines": {
     "node": "0.10.x"

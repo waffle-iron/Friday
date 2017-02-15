@@ -31,6 +31,13 @@ function FindByBuildNumber(arr, buildNumber) {
 
 module.exports = function (robot) {
 
+    robot.respond(/(current version|build number)/i, function(msg){
+        redisClient.get('fridayVersion', function (err, reply) {
+            msg.set(reply);
+        });
+    });
+
+
     robot.respond(/update source/i, function (msg) {
         msg.http('https://api.travis-ci.org/repos/codeiain/Friday').get()(function (err, res, body) {
             currentBuildData = JSON.parse(body);
