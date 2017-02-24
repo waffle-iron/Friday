@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/codeiain/Friday.png?label=ready&title=Ready)](https://waffle.io/codeiain/Friday)
 # friday
 
 friday is a chat bot built on the [Hubot][hubot] framework. It was
